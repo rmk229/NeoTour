@@ -32,5 +32,4 @@ public class BookingRequest {
 
     @Column(name = "comments", length = 200)
     private String comments;
-
 }

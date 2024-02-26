@@ -2,7 +2,7 @@ package kz.yermek.NeoProject.util;
 
 import kz.yermek.NeoProject.dto.CreateTourDto;
 import kz.yermek.NeoProject.dto.TourDto;
-import kz.yermek.NeoProject.dto.TourDtoFromList;
+import kz.yermek.NeoProject.dto.TourListDto;
 import kz.yermek.NeoProject.models.Image;
 import kz.yermek.NeoProject.models.Location;
 import kz.yermek.NeoProject.models.Tour;
@@ -20,8 +20,8 @@ public class TourMapper {
         );
     }
 
-    public static TourDtoFromList toTourDtoFromList(Tour tour) {
-        return new TourDtoFromList(
+    public static TourListDto toTourDtoFromList(Tour tour) {
+        return new TourListDto(
                 tour.getId(),
                 tour.getImages().get(0).getImageUrl(),
                 tour.getTourName()

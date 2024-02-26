@@ -1,5 +1,6 @@
 package kz.yermek.NeoProject.repositories;
 
+import kz.yermek.NeoProject.dto.ReviewDto;
 import kz.yermek.NeoProject.models.Review;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

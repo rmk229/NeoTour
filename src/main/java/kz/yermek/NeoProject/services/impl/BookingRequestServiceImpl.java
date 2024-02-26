@@ -23,6 +23,7 @@ public class BookingRequestServiceImpl implements BookingRequestService {
     private final TourRepository tourRepository;
     private final BookingRequestRepository bookingRequestRepository;
 
+
     @Override
     @Transactional
     public void addBookingRequest(BookingRequestDto requestDto) {
@@ -45,8 +46,9 @@ public class BookingRequestServiceImpl implements BookingRequestService {
     }
 
     @Override
-    public List<BookingRequest> getBookings() {
-        return bookingRequestRepository.findAll();
+    public List<BookingResponseDto> getBookings() {
+        List<BookingRequest> responseDtos = bookingRequestRepository.findAll();
+        return responseDtos.stream().map(BookingMapper::toResponse).toList();
     }
 
     @Override

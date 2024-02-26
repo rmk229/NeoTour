@@ -1,27 +1,24 @@
 package kz.yermek.NeoProject.services;
 
-import kz.yermek.NeoProject.dto.TourDto;
-import kz.yermek.NeoProject.dto.TourDtoFromList;
+import kz.yermek.NeoProject.dto.*;
 import kz.yermek.NeoProject.models.Tour;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-import java.util.Map;
 
 public interface TourService {
-    void addTour(String json, List<MultipartFile> images);
+    void addTour(CreateTourDto json, List<MultipartFile> file);
     TourDto getTourById(Long id);
     void incrementViewCount(Long id);
-    Page<TourDtoFromList> getTours(Map<String, String> params);
-    Page<TourDtoFromList> getPopularTours(Pageable pageable);
-    Page<TourDtoFromList> getSpecialTours(Pageable pageable);
-    Page<TourDtoFromList> getMostVisitedTours(Pageable pageable);
-
-    Page<TourDtoFromList> getToursByContinent(String continent, Pageable pageable, int monthMask);
-
-    Page<TourDtoFromList> getRecommendedTours(Integer seasonMask, int page);
+    Page<TourListDto> getTours(String params, int season, int page, int size);
+    Page<TourListDto> getPopularTours(Pageable pageable);
+    Page<TourListDto> getSpecialTours(Pageable pageable);
+    Page<TourListDto> getMostVisitedTours(Pageable pageable);
+    Page<TourListDto> getToursByContinent(String continent, Pageable pageable, int seasonMask);
+    Page<TourListDto> getRecommendedTours(Integer seasonMask, int page);
+    List<TourDto> getAllTours();
     void updateTour(Tour tour);
     void deleteTour(Long id);
 }

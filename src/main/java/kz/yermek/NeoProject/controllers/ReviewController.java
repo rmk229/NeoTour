@@ -5,15 +5,19 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import kz.yermek.NeoProject.dto.CreateReviewDto;
 import kz.yermek.NeoProject.dto.ReviewDto;
 import kz.yermek.NeoProject.services.ReviewService;
 import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @RestController
 @AllArgsConstructor
@@ -24,9 +28,9 @@ public class ReviewController {
 
     private final ReviewService reviewService;
 
-    @PostMapping("/addReview")
+    @PostMapping("/add-review")
     @ResponseStatus(HttpStatus.CREATED)
-    public void addReview(@RequestPart String dto, @RequestPart("image") MultipartFile image) {
+    public void addReview(@ModelAttribute CreateReviewDto dto, @RequestPart("images") MultipartFile image) {
         reviewService.addReview(dto, image);
     }
 
@@ -44,9 +48,7 @@ public class ReviewController {
             @PathVariable Long tourId,
             @RequestParam(value = "page", defaultValue = "0") int page,
             @RequestParam(value = "size", defaultValue = "5") int size
-
     ) {
         return ResponseEntity.ok(reviewService.getReviewsByTourId(tourId, page, size));
-
     }
 }

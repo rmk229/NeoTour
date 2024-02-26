@@ -26,7 +26,7 @@ public class BookingRequestController {
     private final BookingRequestService bookingRequestService;
 
     @GetMapping
-    public ResponseEntity<List<BookingRequest>> getBookings() {
+    public ResponseEntity<List<BookingResponseDto>> getBookings() {
         return ResponseEntity.ok(bookingRequestService.getBookings());
     }
 

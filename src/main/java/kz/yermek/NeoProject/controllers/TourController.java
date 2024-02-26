@@ -1,15 +1,15 @@
 package kz.yermek.NeoProject.controllers;
 
 
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import kz.yermek.NeoProject.dto.CreateTourDto;
 import kz.yermek.NeoProject.dto.TourDto;
-import kz.yermek.NeoProject.dto.TourDtoFromList;
+import kz.yermek.NeoProject.dto.TourListDto;
 import kz.yermek.NeoProject.models.Tour;
 import kz.yermek.NeoProject.repositories.TourRepository;
 import kz.yermek.NeoProject.services.TourService;
@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @AllArgsConstructor
@@ -35,7 +34,7 @@ public class TourController {
 
     @PostMapping("/addTour")
     @ResponseStatus(HttpStatus.CREATED)
-    public void addTour(@RequestPart String dto, @RequestPart("images")List<MultipartFile> images) {
+    public void addTour(@ModelAttribute CreateTourDto dto, @RequestPart("images") List<MultipartFile> images) {
         tourService.addTour(dto, images);
     }
 
@@ -77,17 +76,20 @@ public class TourController {
                     @Parameter(name = "season", description = "Recommended in season...", example = "3")
             }
     )
-    public ResponseEntity<Page<TourDtoFromList>> getTours(@RequestParam Map<String, String> params) {
-        return ResponseEntity.ok(tourService.getTours(params));
+    public ResponseEntity<Page<TourListDto>> getTours(@RequestParam("params") String params,
+                                                      @RequestParam("season") int season,
+                                                      @RequestParam(value = "page", defaultValue = "0", required = false) Integer page,
+                                                      @RequestParam(value = "size", defaultValue = "10", required = false) Integer size) {
+        return ResponseEntity.ok(tourService.getTours(params, season, page, size));
     }
 
-    @GetMapping("/getTours")
-    public ResponseEntity<List<Tour>> getTours() {
-        return ResponseEntity.ok(tourRepository.findAll());
+    @GetMapping("/allTours")
+    public ResponseEntity<List<TourDto>> getAllTours() {
+        return ResponseEntity.ok(tourService.getAllTours());
     }
 
     @PutMapping("/updateTour")
-    public void updateTour(@RequestBody Tour tour){
+    public void updateTour(@RequestBody Tour tour) {
         tourService.updateTour(tour);
     }
 

@@ -1,10 +1,9 @@
 package kz.yermek.NeoProject.services.impl;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kz.yermek.NeoProject.dto.CreateTourDto;
 import kz.yermek.NeoProject.dto.TourDto;
-import kz.yermek.NeoProject.dto.TourDtoFromList;
+import kz.yermek.NeoProject.dto.TourListDto;
 import kz.yermek.NeoProject.models.Tour;
 import kz.yermek.NeoProject.repositories.TourRepository;
 import kz.yermek.NeoProject.services.ImageService;
@@ -12,7 +11,6 @@ import kz.yermek.NeoProject.services.TourService;
 import kz.yermek.NeoProject.util.Seasons;
 import kz.yermek.NeoProject.util.TourMapper;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -23,7 +21,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -34,23 +31,17 @@ public class TourServiceImpl implements TourService {
 
 
     @Override
-    public void addTour(String json, List<MultipartFile> images) {
-        CreateTourDto tourDto;
-        try {
-            tourDto = mapper.readValue(json, CreateTourDto.class);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
-        Tour tour = TourMapper.fromDto(tourDto);
+    public void addTour(CreateTourDto json, List<MultipartFile> images) {
+        Tour tour = TourMapper.fromDto(json);
         int seasons = 0;
-        if (tourDto.seasons() != null) {
-            for (int season: tourDto.seasons()) {
+        if (json.seasons() != null) {
+            for (int season : json.seasons()) {
                 seasons |= Seasons.ALL[season - 1];
             }
         }
 
         tour.setRecommendedSeasons(seasons);
-        for (MultipartFile image: images) {
+        for (MultipartFile image : images) {
             tour.addImage(imageService.processImage(image));
         }
         tourRepository.save(tour);
@@ -70,19 +61,8 @@ public class TourServiceImpl implements TourService {
     }
 
     @Override
-    @Cacheable(value = "tourListsCache", key = "#params.hashCode()")
-    public Page<TourDtoFromList> getTours(Map<String, String> params) {
-        String param = params.get("param");
-        String pageStr = params.getOrDefault("page", "0");
-        String sizeStr = params.getOrDefault("size", "3");
-        String seasonStr = params.get("season");
-
-        int page = Integer.parseInt(pageStr);
-        int size = Integer.parseInt(sizeStr);
-        int season;
-
-        if (seasonStr != null) {
-            season = Integer.parseInt(seasonStr);
+    public Page<TourListDto> getTours(String params, int season, int page, int size) {
+        if (season != 0) {
             if (season < 1 || season > 4) {
                 throw new IllegalArgumentException("Season should be between 1 and 4");
             }
@@ -97,45 +77,49 @@ public class TourServiceImpl implements TourService {
 
         Pageable pageable = PageRequest.of(page, size);
 
-        return switch (param) {
+        return switch (params) {
             case "popular" -> getPopularTours(pageable);
             case "featured" -> getSpecialTours(pageable);
             case "visited" -> getMostVisitedTours(pageable);
             case "recommended" -> getRecommendedTours(seasonMask, page);
-            default -> getToursByContinent(param, pageable, seasonMask);
+            default -> getToursByContinent(params, pageable, seasonMask);
         };
     }
 
     @Override
-    public Page<TourDtoFromList> getPopularTours(Pageable pageable) {
+    public Page<TourListDto> getPopularTours(Pageable pageable) {
         return tourRepository.findAllByOrderByViewCountDesc(pageable)
                 .map(TourMapper::toTourDtoFromList);
     }
 
     @Override
-    public Page<TourDtoFromList> getSpecialTours(Pageable pageable) {
+    public Page<TourListDto> getSpecialTours(Pageable pageable) {
         return tourRepository.findAllBySpecialTrue(Seasons.getCurrentSeasonMask(), pageable)
                 .map(TourMapper::toTourDtoFromList);
     }
 
     @Override
-    public Page<TourDtoFromList> getMostVisitedTours(Pageable pageable) {
+    public Page<TourListDto> getMostVisitedTours(Pageable pageable) {
         return tourRepository.findAllByOrderByBookingCountDesc(pageable)
                 .map(TourMapper::toTourDtoFromList);
     }
 
     @Override
-    public Page<TourDtoFromList> getToursByContinent(String continent, Pageable pageable, int seasonMask) {
+    public Page<TourListDto> getToursByContinent(String continent, Pageable pageable, int seasonMask) {
         return tourRepository.findAllByLocationContinent(continent, pageable, seasonMask)
                 .map(TourMapper::toTourDtoFromList);
     }
 
     @Override
-    public Page<TourDtoFromList> getRecommendedTours(Integer seasonMask, int page) {
+    public Page<TourListDto> getRecommendedTours(Integer seasonMask, int page) {
         int size = 4;
-
         return tourRepository.findRecommendedTours(seasonMask, PageRequest.of(page, size))
                 .map(TourMapper::toTourDtoFromList);
+    }
+    @Override
+    public List<TourDto> getAllTours() {
+        List<Tour> responseDtos = tourRepository.findAll();
+        return responseDtos.stream().map(TourMapper::toDto).toList();
     }
 
     @Override

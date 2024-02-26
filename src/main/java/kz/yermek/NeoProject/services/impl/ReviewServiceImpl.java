@@ -17,25 +17,19 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class ReviewServiceImpl implements ReviewService {
     private final TourRepository tourRepository;
     private final ReviewRepository reviewRepository;
     private final ImageService imageService;
-    private final ObjectMapper mapper = new ObjectMapper();
-
 
     @Override
-    public void addReview(String json, MultipartFile image) {
-        CreateReviewDto reviewDto;
-        try {
-            reviewDto = mapper.readValue(json, CreateReviewDto.class);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
-        Review review = ReviewMapper.fromDto(reviewDto);
-        review.setTour(tourRepository.findById(reviewDto.tourId()).orElseThrow());
+    public void addReview(CreateReviewDto json, MultipartFile image) {
+        Review review = ReviewMapper.fromDto(json);
+        review.setTour(tourRepository.findById(json.tourId()).orElseThrow());
         review.setImageProfile(imageService.processImage(image));
 
         reviewRepository.save(review);
