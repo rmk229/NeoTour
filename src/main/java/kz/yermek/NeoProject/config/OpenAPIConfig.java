@@ -35,8 +35,8 @@ public class OpenAPIConfig {
     @Bean
     public OpenAPI usersMicroserviceOpenAPI() {
         return new OpenAPI()
-                .info(new Info().title("Your API Title")
-                        .description("Your API Description")
+                .info(new Info().title("Neo tour API Title")
+                        .description("Description")
                         .version("1.0"));
     }
 }
