@@ -30,6 +30,7 @@ public class TourMapper {
 
     public static Tour fromDto(CreateTourDto dto) {
         Tour tour = new Tour();
+
         tour.setTourName(dto.name());
         tour.setLocation(new Location(dto.place(), dto.country(), dto.continent()));
         tour.setDescription(dto.description());

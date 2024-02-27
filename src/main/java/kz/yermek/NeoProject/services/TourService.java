@@ -10,6 +10,9 @@ import java.util.List;
 
 public interface TourService {
     void addTour(CreateTourDto json, List<MultipartFile> file);
+
+//    void addTour(String json, List<MultipartFile> file);
+
     TourDto getTourById(Long id);
     void incrementViewCount(Long id);
     Page<TourListDto> getTours(String params, int season, int page, int size);

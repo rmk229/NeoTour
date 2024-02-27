@@ -57,7 +57,7 @@ public class TourController {
     @GetMapping
     @Operation(
             summary = "Get tours",
-            description = "Get tours based on parameter.",
+            description = "Get tours",
             tags = {"tour", "get"},
             responses = {
                     @ApiResponse(responseCode = "200", description = "Paged list of tours"),

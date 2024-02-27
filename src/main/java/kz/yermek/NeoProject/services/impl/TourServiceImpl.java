@@ -1,5 +1,6 @@
 package kz.yermek.NeoProject.services.impl;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kz.yermek.NeoProject.dto.CreateTourDto;
 import kz.yermek.NeoProject.dto.TourDto;
@@ -32,20 +33,45 @@ public class TourServiceImpl implements TourService {
 
     @Override
     public void addTour(CreateTourDto json, List<MultipartFile> images) {
-        Tour tour = TourMapper.fromDto(json);
+        Tour tour  = TourMapper.fromDto(json);
         int seasons = 0;
         if (json.seasons() != null) {
             for (int season : json.seasons()) {
                 seasons |= Seasons.ALL[season - 1];
             }
         }
-
         tour.setRecommendedSeasons(seasons);
         for (MultipartFile image : images) {
             tour.addImage(imageService.processImage(image));
         }
         tourRepository.save(tour);
     }
+
+//    @Override
+//    public void addTour(CreateTourDto json, List<MultipartFile> file) {
+//
+//    }
+
+//    @Override
+//    public void addTour(String json, List<MultipartFile> file) {
+//        CreateTourDto dto;
+//        try {
+//            dto = mapper.readValue(json, CreateTourDto.class);
+//        } catch (JsonProcessingException e) {
+//            throw new RuntimeException(e);
+//        }
+//        Tour tour = TourMapper.fromDto(dto);
+//        int seasons = 0;
+//        if (dto.seasons() != null) {
+//            for (int month : dto.seasons()) {
+//                seasons |= Seasons.ALL[month - 1];
+//            }
+//        }
+//
+//        tour.setRecommendedSeasons(seasons);
+//        file.stream().map(imageService::processImage).forEach(tour::addImage);
+//        tourRepository.save(tour);
+//    }
 
     @Override
     @Cacheable(value = "tourDetailsCache", key = "#id")

@@ -20,9 +20,9 @@ public interface TourRepository extends JpaRepository<Tour, Long> {
     @Query("SELECT t FROM Tour t WHERE (LOWER(t.location.continent) = LOWER(:continent) AND BITAND(t.recommendedSeasons, :seasonMask) > 0)")
     Page<Tour> findAllByLocationContinent(String continent, Pageable pageable, int seasonMask);
     @Modifying
-    @Query("UPDATE Tour t SET t.bookingCount = t.bookingCount + 1 WHERE t.id = :id")
+    @Query("UPDATE Tour t set t.bookingCount = t.bookingCount + 1 WHERE t.id = :id")
     void incrementBookingCount(Long id);
     @Modifying
-    @Query("UPDATE Tour t SET t.viewCount = t.viewCount + 1 WHERE t.id = :id")
+    @Query("UPDATE Tour t set t.viewCount = t.viewCount + 1 WHERE t.id = :id")
     void incrementViewCount(Long id);
 }

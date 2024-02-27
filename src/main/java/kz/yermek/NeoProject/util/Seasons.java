@@ -3,7 +3,7 @@ package kz.yermek.NeoProject.util;
 import java.time.LocalDate;
 
 public class Seasons {
-    public static final int AUTUMN = 1 << 0;
+    public static final int AUTUMN = 1;
     public static final int SPRING = 1 << 1;
     public static final int SUMMER = 1 << 2;
     public static final int WINTER = 1 << 3;

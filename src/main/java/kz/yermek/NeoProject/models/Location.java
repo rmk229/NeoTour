@@ -29,6 +29,8 @@ public class Location {
     private List<Tour> tours;
 
     public Location(String place, String country, String continent) {
-
+        this.place = place;
+        this.country = country;
+        this.continent = continent;
     }
 }
