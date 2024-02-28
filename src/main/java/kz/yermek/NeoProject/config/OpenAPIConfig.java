@@ -28,12 +28,6 @@ import org.springframework.context.annotation.Configuration;
         }
 )
 public class OpenAPIConfig {
-//    @Bean
-//    public OpenAPI usersMicroserviceOpenAPI() {
-//        return new OpenAPI()
-//                .info(new Info().title("Neo tour API Title")
-//                        .description("Description")
-//                        .version("1.0"));
-//    }
+
 }
 

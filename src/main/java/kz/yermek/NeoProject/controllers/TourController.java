@@ -94,8 +94,9 @@ public class TourController {
     }
 
     @DeleteMapping("/{id}")
-    public void deleteTour(@PathVariable Long id) {
+    public ResponseEntity<TourDto> deleteTour(@PathVariable Long id) {
         tourService.deleteTour(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
 }

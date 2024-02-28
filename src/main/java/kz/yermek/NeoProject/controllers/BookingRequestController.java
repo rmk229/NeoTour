@@ -54,7 +54,7 @@ public class BookingRequestController {
     @DeleteMapping("/{id}")
     public ResponseEntity<BookingRequestDto> deleteBooking(@PathVariable Long id) {
         bookingRequestService.deleteBookingRequest(id);
-        return (ResponseEntity<BookingRequestDto>) ResponseEntity.ok();
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 
     }
 }
